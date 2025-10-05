@@ -1,17 +1,22 @@
 package com.josephadogeri.contact_management_app.controller;
 
+import com.josephadogeri.contact_management_app.Auditable;
 import com.josephadogeri.contact_management_app.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/contacts") // Base URL for all endpoints in this controller
-public class ContactController {
+@RequestMapping("/api/v1/contacts") // Base URL for all endpoints in this controller
+public class ContactController extends Auditable {
 
     private record Product(
             Integer productId,
@@ -79,6 +84,21 @@ public class ContactController {
 //        userService.deleteUser(id);
 //        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return products;
+    }
+
+    @GetMapping("/token")
+    public String getToken(){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+
+            String currentUserName = authentication.getName();
+            return currentUserName;
+           // return "Access Token: " + accessToken;
+        } else {
+            return "Not a JWT authenticated user.";
+        }
     }
 
 }
