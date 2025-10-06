@@ -6,9 +6,12 @@ import com.josephadogeri.contact_management_app.Auditable;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.service.UserService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("")
@@ -26,7 +29,7 @@ public class UserController extends Auditable {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user){
+    public User register(@RequestBody User user) throws MessagingException, IOException {
         return userService.register(user);
     }
     @PostMapping("/login")
