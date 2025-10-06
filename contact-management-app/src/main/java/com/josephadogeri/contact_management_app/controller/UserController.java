@@ -41,4 +41,21 @@ public class UserController extends Auditable implements UserDocumentation {
 
         return userService.verify(user);
     }
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestBody User user){
+
+        return "reset password";
+    }
+
+    @PostMapping("/forgot-password")
+    public String forgotPassword(@RequestBody User user){
+
+        return "forgot password";
+    }
+
+    @PostMapping("/deactivate")
+    public String deactivate(@RequestBody User user){
+
+        return "deactivate account";
+    }
 }
