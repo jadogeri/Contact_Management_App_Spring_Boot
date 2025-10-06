@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -23,25 +24,29 @@ public class WebSecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
             // for Swagger UI v2
-            "/v2/api-docs",
-            "/api-docs",
-            "/swagger-ui/index.html",
-            "swagger-ui.index.html",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/webjars/**",
+//            "/v2/api-docs",
+//            "/api-docs",
+//            "/swagger-ui/index.html",
+//            "/swagger-ui.index.html",
+//            "/swagger-resources",
+//            "/swagger-resources/**",
+//            "/configuration/**",
+//            "/configuration/ui",
+//            "/configuration/security",
+//            "/webjars/**",
             // for Swagger UI v3 (OpenAPI)
-            "/v3/api-docs/**",
+//            "/v3/api-docs/**",
             "/swagger-ui/**" ,
+            "/swagger-ui.html",
+            "/swagger-ui/*",
+            "/v3/api-docs",
+            "/v3/api-docs/swagger-config",
             "/users/register",
             "/users/login",
-            "users/register",
-            "users/login",
-            "register",
-            "login",
+            "/users/register",
+            "/users/login",
+            "/register",
+            "/login",
             "/users/**"
     };
 
@@ -58,14 +63,16 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         request-> request
-                                .requestMatchers(AUTH_WHITELIST).permitAll()
+                                .requestMatchers( AUTH_WHITELIST).permitAll()
                                 .anyRequest().authenticated()
 
                 )
                 //.formLogin(Customizer.withDefaults())
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(Customizer.withDefaults());
+//                .httpBasic(Customizer.withDefaults());
+                .httpBasic(            configurer ->
+                        configurer.securityContextRepository(new HttpSessionSecurityContextRepository()));
         return httpSecurity.build();
 
     }
@@ -91,6 +98,7 @@ public class WebSecurityConfig {
 
         return configuration.getAuthenticationManager();
     }
+
 
 }
 
