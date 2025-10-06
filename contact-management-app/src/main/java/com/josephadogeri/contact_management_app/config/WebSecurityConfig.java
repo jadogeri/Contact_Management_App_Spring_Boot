@@ -69,9 +69,9 @@ public class WebSecurityConfig {
                 //.formLogin(Customizer.withDefaults())
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-//                .httpBasic(Customizer.withDefaults());
-                .httpBasic(            configurer ->
-                        configurer.securityContextRepository(new HttpSessionSecurityContextRepository()));
+                .httpBasic(Customizer.withDefaults());
+//                .httpBasic(            configurer ->
+//                        configurer.securityContextRepository(new HttpSessionSecurityContextRepository()));
         return httpSecurity.build();
 
     }

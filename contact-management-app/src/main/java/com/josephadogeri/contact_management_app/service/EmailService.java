@@ -18,14 +18,14 @@ import java.util.Map;
 public class EmailService {
 
     @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     @Autowired
-    private Handlebars handlebars; // Injected by handlebars-spring-boot-starter
+    private final Handlebars handlebars; // Injected by handlebars-spring-boot-starter
 
-    private MimeMessage mimeMessage;
+    private final MimeMessage mimeMessage;
 
-    private MimeMessageHelper mimeMessageHelper;
+    private final MimeMessageHelper mimeMessageHelper;
 
     public  EmailService(Handlebars handlebars, JavaMailSender javaMailSender) throws MessagingException {
         this.handlebars = handlebars;
