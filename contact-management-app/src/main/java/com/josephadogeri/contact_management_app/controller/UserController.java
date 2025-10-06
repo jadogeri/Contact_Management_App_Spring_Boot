@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/users")
 public class UserController extends Auditable {
 
     @Autowired

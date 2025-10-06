@@ -107,8 +107,13 @@
             <artifactId>handlebars-spring-boot-starter</artifactId>
             <version>0.5.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<plugins>

@@ -10,12 +10,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -24,6 +20,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
+
+    private static final String[] AUTH_WHITELIST = {
+            // for Swagger UI v2
+            "/v2/api-docs",
+            "/api-docs",
+            "/swagger-ui/index.html",
+            "swagger-ui.index.html",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/webjars/**",
+            // for Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**" ,
+            "/users/register",
+            "/users/login",
+            "users/register",
+            "users/login",
+            "register",
+            "login",
+            "/users/**"
+    };
 
     private final JwtAuthenticationFilter  jwtAuthenticationFilter;
     @Autowired
@@ -38,7 +58,7 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         request-> request
-                                .requestMatchers("email/**","register","login").permitAll()
+                                .requestMatchers(AUTH_WHITELIST).permitAll()
                                 .anyRequest().authenticated()
 
                 )
@@ -55,7 +75,6 @@ public class WebSecurityConfig {
         DaoAuthenticationProvider provider
                 = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
-        //provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
         provider.setPasswordEncoder(bCryptPasswordEncoder());
 
         return provider;

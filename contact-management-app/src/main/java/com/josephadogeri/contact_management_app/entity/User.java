@@ -2,7 +2,9 @@ package com.josephadogeri.contact_management_app.entity;
 
 
 import com.josephadogeri.contact_management_app.Auditable;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -13,6 +15,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 
 
 @Entity(name = "Users")
+@Data
+@Tag(name = "Users", description = "the User Api")
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(name = "email_unique" , columnNames = "email"),
