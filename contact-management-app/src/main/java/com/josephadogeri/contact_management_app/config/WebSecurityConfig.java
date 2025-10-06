@@ -35,11 +35,10 @@ public class WebSecurityConfig {
 //            "/configuration/security",
 //            "/webjars/**",
             // for Swagger UI v3 (OpenAPI)
-//            "/v3/api-docs/**",
-            "/swagger-ui/**" ,
             "/swagger-ui.html",
             "/swagger-ui/*",
             "/v3/api-docs",
+            "/v3/api-docs/swagger-config",
             "/v3/api-docs/swagger-config",
             "/users/register",
             "/users/login",
