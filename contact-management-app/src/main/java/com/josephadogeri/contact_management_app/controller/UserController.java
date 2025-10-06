@@ -3,6 +3,8 @@ package com.josephadogeri.contact_management_app.controller;
 
 
 import com.josephadogeri.contact_management_app.Auditable;
+import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.service.UserService;
@@ -29,7 +31,7 @@ public class UserController extends Auditable {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) throws MessagingException, IOException {
+    public UserRegistrationResponseDTO register(@RequestBody UserRegistrationRequestDTO user) throws MessagingException, IOException {
         return userService.register(user);
     }
     @PostMapping("/login")

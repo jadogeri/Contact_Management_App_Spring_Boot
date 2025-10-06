@@ -2,6 +2,8 @@ package com.josephadogeri.contact_management_app.service;
 
 
 import com.josephadogeri.contact_management_app.dto.request.EmailRequest;
+import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import jakarta.mail.MessagingException;
@@ -39,9 +41,17 @@ public class UserService {
         this.jwtService = jwtService;
     }
 
-    public User register(User user) throws MessagingException, IOException {
-        user.setPassword(bCryptPasswordEncoder
-                .encode(user.getPassword()));
+    public UserRegistrationResponseDTO register(UserRegistrationRequestDTO userRegistrationRequestDTO) throws MessagingException, IOException {
+        if(userRegistrationRequestDTO.getEmail() == null || userRegistrationRequestDTO.getEmail().isEmpty()){
+            throw new IllegalArgumentException("Username, email and password are required");
+        }
+
+        User user = new User();
+        user.setUsername(userRegistrationRequestDTO.getUsername());
+        user.setEmail(userRegistrationRequestDTO.getEmail());
+        user.setPassword(bCryptPasswordEncoder.encode(userRegistrationRequestDTO.getPassword()));
+//        user.setPassword(bCryptPasswordEncoder
+//                .encode(user.getPassword()));
 
         System.out.println("Response from other endpoint: " );
         EmailRequest emailRequest = new EmailRequest();
@@ -52,8 +62,14 @@ public class UserService {
         context.put("email", user.getEmail());
 
         emailService.sendWelcomeEmail(emailRequest, context);
-        return user;
-        //return userRepository.save(user);
+        //return user;
+        User savedUser =  userRepository.save(user);
+        UserRegistrationResponseDTO userRegistrationResponseDTO
+                = new UserRegistrationResponseDTO(savedUser.getUsername(), savedUser.getEmail());
+        userRegistrationResponseDTO.setCreatedAt(savedUser.getCreatedAt());
+        userRegistrationResponseDTO.setLastModifiedDate(savedUser.getLastModifiedDate());
+        return userRegistrationResponseDTO;
+
     }
 
     public String verify(User user) {
