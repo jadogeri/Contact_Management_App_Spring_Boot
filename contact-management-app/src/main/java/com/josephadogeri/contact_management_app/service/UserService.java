@@ -42,7 +42,7 @@ public class UserService {
     }
 
     public UserRegistrationResponseDTO register(UserRegistrationRequestDTO userRegistrationRequestDTO) throws MessagingException, IOException {
-        if(userRegistrationRequestDTO.getEmail() == null || userRegistrationRequestDTO.getEmail().isEmpty()){
+        if(userRegistrationRequestDTO.getEmail() == null || userRegistrationRequestDTO.getUsername() == null || userRegistrationRequestDTO.getPassword() == null){
             throw new IllegalArgumentException("Username, email and password are required");
         }
 
