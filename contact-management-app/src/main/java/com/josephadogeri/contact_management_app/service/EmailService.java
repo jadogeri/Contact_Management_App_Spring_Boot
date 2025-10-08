@@ -44,7 +44,6 @@ public class EmailService {
         mimeMessageHelper.setTo(emailRequest.getTo());
         mimeMessageHelper.setSubject(emailRequest.getSubject());
         mimeMessageHelper.setText(htmlContent, true); // true indicates HTML content
-
         mailSender.send(mimeMessage);
     }
 

@@ -1,5 +1,6 @@
 package com.josephadogeri.contact_management_app.config;
 
+import com.josephadogeri.contact_management_app.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,10 +51,14 @@ public class WebSecurityConfig {
     };
 
     private final JwtAuthenticationFilter  jwtAuthenticationFilter;
+
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean
@@ -69,12 +74,16 @@ public class WebSecurityConfig {
                 //.formLogin(Customizer.withDefaults())
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults())
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(customAuthenticationEntryPoint) // Use custom entry point
+                );
 //                .httpBasic(            configurer ->
 //                        configurer.securityContextRepository(new HttpSessionSecurityContextRepository()));
         return httpSecurity.build();
 
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
