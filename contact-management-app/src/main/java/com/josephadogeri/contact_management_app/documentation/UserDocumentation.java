@@ -6,6 +6,7 @@ import com.josephadogeri.contact_management_app.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.io.IOException;
 
 @Tag(name = "Users", description = "the User Api")
+@SecurityRequirements
 public interface UserDocumentation {
 
     @Operation(
