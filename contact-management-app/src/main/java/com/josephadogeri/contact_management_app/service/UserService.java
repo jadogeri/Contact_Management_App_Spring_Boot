@@ -9,9 +9,13 @@ import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.utils.CredentialsValidatorUtil;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -90,6 +94,7 @@ public class UserService {
     }
 
     public String verify(User user) {
+        try{
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         user.getUsername(), user.getPassword()
@@ -101,6 +106,13 @@ public class UserService {
         }else{
             System.out.println("invalid password");
             return "fail";
+        }
+        } catch (BadCredentialsException e) {
+            // Handle invalid password specifically
+            return ("resting data Invalid username or password");
+        } catch (AuthenticationException e) {
+            // Handle other authentication errors
+            return ("Authentication failed");
         }
     }
 }

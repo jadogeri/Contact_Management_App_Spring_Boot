@@ -43,6 +43,11 @@ public class User extends Auditable {
     private String password;
 
     private String email;
+
+    private boolean enabled;
+
+    private int failedAttempts;
+
 //
 //    @CreatedDate
 //    @Column(name = "created_at", nullable = false, updatable = false)
@@ -54,6 +59,8 @@ public class User extends Auditable {
 
     public User() {
         super();
+        this.failedAttempts = 0;
+        this.enabled = true;
     }
 
     public User(String username, String email, String passwordeatedDate, LocalDateTime lastModifiedDate) {
@@ -61,6 +68,8 @@ public class User extends Auditable {
         this.username = username;
         this.password = passwordeatedDate;
         this.email = email;
+        this.failedAttempts = 0;
+        this.enabled = true;
     }
     public User(Integer id,String username, String email, String password){
         super();
@@ -68,6 +77,8 @@ public class User extends Auditable {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.failedAttempts = 0;
+        this.enabled = true;
 
     }
 
@@ -102,6 +113,19 @@ public class User extends Auditable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    public int getFailedAttempts() {
+        return this.failedAttempts;
+    }
+    public void setFailedAttempts(int failedAttempts) {
+        this.failedAttempts = failedAttempts;
     }
 
 }
