@@ -1,5 +1,10 @@
 package com.josephadogeri.contact_management_app.dto.request;
 
+import com.josephadogeri.contact_management_app.entity.User;
+import com.josephadogeri.contact_management_app.interfaces.UserCreation;
+
+import java.io.Serializable;
+
 public class UserRegistrationRequestDTO {
     private String username;
     private String email;
@@ -21,4 +26,5 @@ public class UserRegistrationRequestDTO {
     public String getPassword() { return password; }
 
     public void setPassword(String password) { this.password = password; }
+
 }

@@ -1,5 +1,7 @@
 package com.josephadogeri.contact_management_app.config;
 
+import com.josephadogeri.contact_management_app.CustomAuthenticationEntryPoint;
+import com.josephadogeri.contact_management_app.CustomAuthenticationFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +15,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+
+    @Autowired
+    private CustomAuthenticationFailureHandler authenticationFailureHandler;
 
     private final UserDetailsService userDetailsService;
 
@@ -50,10 +57,14 @@ public class WebSecurityConfig {
     };
 
     private final JwtAuthenticationFilter  jwtAuthenticationFilter;
+
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean
@@ -67,14 +78,23 @@ public class WebSecurityConfig {
 
                 )
                 //.formLogin(Customizer.withDefaults())
+                .formLogin(form -> form.disable())
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(Customizer.withDefaults());
+            //    .httpBasic(Customizer.withDefaults())
+                .httpBasic(httpBasic -> httpBasic.disable())
+
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+
+                        .authenticationEntryPoint(customAuthenticationEntryPoint) // Use custom entry point
+                );
+
 //                .httpBasic(            configurer ->
 //                        configurer.securityContextRepository(new HttpSessionSecurityContextRepository()));
         return httpSecurity.build();
 
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -98,6 +118,18 @@ public class WebSecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
 
+
+    // Example for Basic Auth: Create a custom entry point to use your failure handler
+    @Bean
+    public CustomAuthenticationEntryPoint customBasicAuthenticationEntryPoint() {
+        CustomAuthenticationEntryPoint entryPoint = new CustomAuthenticationEntryPoint();
+
+        return entryPoint;
+    }
 }
 
