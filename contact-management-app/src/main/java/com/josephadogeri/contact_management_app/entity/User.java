@@ -48,25 +48,16 @@ public class User extends Auditable {
 
     private int failedAttempts;
 
-//
-//    @CreatedDate
-//    @Column(name = "created_at", nullable = false, updatable = false)
-//    private LocalDateTime createdAt;
-//
-//    @LastModifiedDate
-//    @Column(name = "last_modified_date")
-//    private LocalDateTime lastModifiedDate;
-
     public User() {
         super();
         this.failedAttempts = 0;
         this.enabled = true;
     }
 
-    public User(String username, String email, String passwordeatedDate, LocalDateTime lastModifiedDate) {
+    public User(String username, String email, String password) {
         super();
         this.username = username;
-        this.password = passwordeatedDate;
+        this.password = password;
         this.email = email;
         this.failedAttempts = 0;
         this.enabled = true;

@@ -2,10 +2,13 @@ package com.josephadogeri.contact_management_app.service;
 
 
 import com.josephadogeri.contact_management_app.dto.request.EmailRequest;
+import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
+import com.josephadogeri.contact_management_app.exceptions.AccountLockedException;
 import com.josephadogeri.contact_management_app.exceptions.CustomAuthenticationFailureHandler;
+import com.josephadogeri.contact_management_app.exceptions.CustomAuthenticationSuccessHandler;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.utils.CredentialsValidatorUtil;
 import jakarta.mail.MessagingException;
@@ -40,6 +43,8 @@ public class UserService {
 
     @Autowired
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    @Autowired
+    private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
 
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
@@ -55,8 +60,6 @@ public class UserService {
         String username = userRegistrationRequestDTO.getUsername();
         String password = userRegistrationRequestDTO.getPassword();
         String email = userRegistrationRequestDTO.getEmail();
-
-        System.out.println("regitering a new user******************************");
 
         if(email == null || username == null || password == null){
             throw new IllegalArgumentException("Username, email and password are required");
@@ -76,10 +79,8 @@ public class UserService {
         user.setUsername(userRegistrationRequestDTO.getUsername());
         user.setEmail(userRegistrationRequestDTO.getEmail());
         String encodedPassword = bCryptPasswordEncoder.encode(userRegistrationRequestDTO.getPassword());
-        System.out.println("encoded password*******************************");
         user.setPassword(encodedPassword);
 
-        System.out.println("Response from other endpoint: " );
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setTo(user.getEmail());
         emailRequest.setSubject("Welcome New User");
@@ -98,15 +99,25 @@ public class UserService {
 
     }
 
-    public String verify(User user) throws MessagingException, IOException {
+    public String verify(UserLoginRequestDTO userLoginRequestDTO) throws MessagingException, IOException {
+        User user = null;
+
         try{
+            user = userRepository.findByUsername(userLoginRequestDTO.getUsername());
             Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.getUsername(), user.getPassword()
+                        userLoginRequestDTO.getUsername(), userLoginRequestDTO.getPassword()
                 )
             );
-            //User u =userRepository.findByUsername(user.getUsername());
+            if(!user.isEnabled()){
+                throw new AccountLockedException("Account is locked");
+            }
+
+
+
+
             if (authenticate.isAuthenticated()) {
+                customAuthenticationSuccessHandler.onAuthenticationSuccess(user.getUsername());
                 return jwtService.generateToken(user);
             }else{
                 System.out.println("invalid password");

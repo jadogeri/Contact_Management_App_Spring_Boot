@@ -23,27 +23,18 @@ public class WebSecurityConfig {
     private final UserDetailsService userDetailsService;
 
     private static final String[] AUTH_WHITELIST = {
-            // for Swagger UI v2
-//            "/v2/api-docs",
-//            "/api-docs",
-//            "/swagger-ui/index.html",
-//            "/swagger-ui.index.html",
-//            "/swagger-resources",
-//            "/swagger-resources/**",
-//            "/configuration/**",
-//            "/configuration/ui",
-//            "/configuration/security",
-//            "/webjars/**",
-            // for Swagger UI v3 (OpenAPI)
+            // Swagger UI v2
+            "/v2/api-docs",
             "/swagger-ui.html",
-            "/swagger-ui/*",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/webjars/**",
+            // Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
             "/v3/api-docs",
-            "/v3/api-docs/swagger-config",
-            "/v3/api-docs/swagger-config",
-//            "/users/register",
-//            "/users/login",
-           "/register",
-//            "/login",
+            "/swagger-ui/**",
             "/users/**"
     };
 
@@ -62,7 +53,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        /*
+
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
@@ -77,28 +68,28 @@ public class WebSecurityConfig {
                 .httpBasic(Customizer.withDefaults());
 
 
-         */
 
-        httpSecurity
-             .csrf(csrf -> csrf.disable())
-             .authorizeHttpRequests(
-                     request-> request
-                             .requestMatchers( AUTH_WHITELIST).permitAll()
-                             .anyRequest().authenticated()
-//
-             )
-             //.formLogin(Customizer.withDefaults())
- //            .formLogin(form -> form.disable())
-             .addFilterBefore(jwtAuthenticationFilter,
-                     UsernamePasswordAuthenticationFilter.class)
-            .httpBasic(Customizer.withDefaults())
-             //.httpBasic(httpBasic -> httpBasic.disable())
-//
-             .exceptionHandling(exceptionHandling -> exceptionHandling
-//
-//
-                     .authenticationEntryPoint(customAuthenticationEntryPoint) // Use custom entry point
-             );
+
+//        httpSecurity
+//             .csrf(csrf -> csrf.disable())
+//             .authorizeHttpRequests(
+//                     request-> request
+//                             .requestMatchers( AUTH_WHITELIST).permitAll()
+//                             .anyRequest().authenticated()
+////
+//             )
+//             //.formLogin(Customizer.withDefaults())
+// //            .formLogin(form -> form.disable())
+//             .addFilterBefore(jwtAuthenticationFilter,
+//                     UsernamePasswordAuthenticationFilter.class)
+//            .httpBasic(Customizer.withDefaults())
+//             //.httpBasic(httpBasic -> httpBasic.disable())
+////
+//             .exceptionHandling(exceptionHandling -> exceptionHandling
+////
+////
+//                     .authenticationEntryPoint(customAuthenticationEntryPoint) // Use custom entry point
+//             );
 
         return httpSecurity.build();
 

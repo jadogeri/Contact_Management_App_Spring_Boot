@@ -7,6 +7,7 @@ package com.josephadogeri.contact_management_app.exceptions;
  */
 
 import com.josephadogeri.contact_management_app.utils.RequestContextUtil;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.coyote.BadRequestException;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Hidden
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -150,6 +152,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errorDetails = new HashMap<>();
         errorDetails.put("message", ex.getMessage());
         errorDetails.put("code", "BAD_REQUEST");
+        errorDetails.put("status", String.valueOf(HttpServletResponse.SC_BAD_REQUEST));
         errorDetails.put("url", request != null ? request.getRequestURI() : "" );
         errorDetails.put("method", request != null ? request.getMethod() : "");
         errorDetails.put("timestamp", LocalDateTime.now().toString());

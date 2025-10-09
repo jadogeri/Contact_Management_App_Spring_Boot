@@ -69,7 +69,7 @@ public class CustomAuthenticationFailureHandler {
                     context.put("email", user.getEmail());
                     context.put("year", String.valueOf(LocalDate.now().getYear()));
                     emailService.sendLckedAccountEmail(emailRequest, context);
-                    throw new AccessDeniedException("accoutn is llooooooooooooced");
+                    throw new AccountLockedException("accoutn is llooooooooooooced");
 
                 }
             }else{
@@ -81,7 +81,7 @@ public class CustomAuthenticationFailureHandler {
                 context.put("email", user.getEmail());
                 context.put("year", String.valueOf(LocalDate.now().getYear()));
                 emailService.sendLckedAccountEmail(emailRequest, context);
-                throw new AccessDeniedException("accoutn is cuuuuuurentlllllllly llooooooooooooced");
+                throw new AccountLockedException("accoutn is cuuuuuurentlllllllly llooooooooooooced");
 
             }
         }
