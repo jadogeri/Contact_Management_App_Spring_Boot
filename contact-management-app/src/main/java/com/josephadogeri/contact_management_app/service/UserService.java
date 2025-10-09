@@ -4,6 +4,7 @@ package com.josephadogeri.contact_management_app.service;
 import com.josephadogeri.contact_management_app.dto.request.EmailRequest;
 import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
+import com.josephadogeri.contact_management_app.dto.request.UserResetPasswordRequestDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.exceptions.AccountLockedException;
@@ -131,6 +132,26 @@ public class UserService {
             // Handle other authentication errors
             return ("Authentication failed");
         }
+    }
+
+    public String resetPassword(UserResetPasswordRequestDTO userResetPasswordRequestDTO) throws MessagingException, IOException {
+        String email = userResetPasswordRequestDTO.getEmail();
+
+        if(email == null ){
+            throw new IllegalArgumentException("email is required");
+        }
+        //Validate credentials
+        if(!credentialsValidatorUtil.isValidEmail(email)){
+            throw new IllegalArgumentException("Invalid email address");
+        }
+
+        User user = userRepository.findByEmail(email);
+        if(user == null){
+            throw new RuntimeException("user not found by email");
+        }
+
+
+        return "";
     }
 }
 

@@ -1,18 +1,11 @@
 package com.josephadogeri.contact_management_app.dto.request;
 
-public class UserLoginRequestDTO {
-    private String username;
-    private String password;
+import com.josephadogeri.contact_management_app.abstracts.AbstractAuthCredentials;
+
+public class UserLoginRequestDTO extends AbstractAuthCredentials {
 
     public UserLoginRequestDTO(String username, String password) {
-        this.username = username;
-        this.password = password;
+
+        super(username, password);
     }
-    public String getUsername() {  return username; }
-
-    public void setUsername(String username) { this.username = username; }
-
-    public String getPassword() { return password; }
-
-    public void setPassword(String password) { this.password = password; }
 }

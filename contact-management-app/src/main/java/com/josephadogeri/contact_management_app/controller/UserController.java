@@ -6,6 +6,7 @@ import com.josephadogeri.contact_management_app.Auditable;
 import com.josephadogeri.contact_management_app.documentation.UserDocumentation;
 import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
+import com.josephadogeri.contact_management_app.dto.request.UserResetPasswordRequestDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
@@ -44,10 +45,9 @@ public class UserController extends Auditable implements UserDocumentation {
         return userService.verify(user);
     }
     @PostMapping("/reset-password")
-    public String resetPassword(@RequestBody User user){
+    public String resetPassword(@RequestBody UserResetPasswordRequestDTO user) throws MessagingException, IOException {
 
-        return "reset password";
-    }
+        return userService.resetPassword(user);    }
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestBody User user){

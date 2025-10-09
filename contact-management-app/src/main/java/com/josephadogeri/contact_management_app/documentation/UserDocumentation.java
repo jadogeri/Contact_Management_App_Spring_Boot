@@ -2,6 +2,7 @@ package com.josephadogeri.contact_management_app.documentation;
 
 import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
+import com.josephadogeri.contact_management_app.dto.request.UserResetPasswordRequestDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,7 +56,7 @@ public interface UserDocumentation {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public String resetPassword(@RequestBody User user);
+    public String resetPassword(@RequestBody UserResetPasswordRequestDTO user) throws MessagingException, IOException;
 
     @Operation(
             summary = "Fetch New User",
