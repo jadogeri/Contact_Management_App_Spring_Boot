@@ -1,6 +1,7 @@
-package com.josephadogeri.contact_management_app;
+package com.josephadogeri.contact_management_app.oldcode;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.josephadogeri.contact_management_app.utils.RequestContextUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +39,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         System.out.println("request :" + request.getRequestURI()  );
         System.out.println("Failed login attempt for user: " + username + ". Reason: " + authException.getMessage());
 
+        HttpServletRequest rtest = RequestContextUtil.getCurrentHttpRequest();
+        System.out.println(rtest.getRequestURI());
+        System.out.println("Failed login attempt for user: " + rtest.getAttribute("username") + ". Reason: " + authException.getMessage());
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
@@ -52,6 +56,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.getWriter().write(objectMapper.writeValueAsString(errorDetails));
     }
 }
+
 
 
 /*

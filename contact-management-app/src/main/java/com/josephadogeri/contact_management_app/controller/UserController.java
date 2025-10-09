@@ -34,6 +34,7 @@ public class UserController extends Auditable implements UserDocumentation {
 
     @PostMapping("/register")
     public UserRegistrationResponseDTO register(@RequestBody UserRegistrationRequestDTO user) throws MessagingException, IOException {
+        System.out.println("Registering User : "+ user.toString());
         return userService.register(user);
     }
     @PostMapping("/login")

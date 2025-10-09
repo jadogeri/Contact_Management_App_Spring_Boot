@@ -1,7 +1,6 @@
 package com.josephadogeri.contact_management_app.config;
 
-import com.josephadogeri.contact_management_app.CustomAuthenticationEntryPoint;
-import com.josephadogeri.contact_management_app.CustomAuthenticationFailureHandler;
+import com.josephadogeri.contact_management_app.oldcode.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,17 +14,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-
-    @Autowired
-    private CustomAuthenticationFailureHandler authenticationFailureHandler;
 
     private final UserDetailsService userDetailsService;
 
@@ -47,12 +40,10 @@ public class WebSecurityConfig {
             "/v3/api-docs",
             "/v3/api-docs/swagger-config",
             "/v3/api-docs/swagger-config",
-            "/users/register",
-            "/users/login",
-            "/users/register",
-            "/users/login",
-            "/register",
-            "/login",
+//            "/users/register",
+//            "/users/login",
+           "/register",
+//            "/login",
             "/users/**"
     };
 
@@ -61,14 +52,17 @@ public class WebSecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
+    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, CustomAuthenticationEntryPoint customAuthenticationEntryPoint//, CustomAuthenticationEntryPoint customAuthenticationEntryPoint
+    ) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        //this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
         this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        /*
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
@@ -77,35 +71,68 @@ public class WebSecurityConfig {
                                 .anyRequest().authenticated()
 
                 )
-                //.formLogin(Customizer.withDefaults())
-                .formLogin(form -> form.disable())
+//                .formLogin(form -> form.disable())
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class)
-            //    .httpBasic(Customizer.withDefaults())
-                .httpBasic(httpBasic -> httpBasic.disable())
+                .httpBasic(Customizer.withDefaults());
 
-                .exceptionHandling(exceptionHandling -> exceptionHandling
 
-                        .authenticationEntryPoint(customAuthenticationEntryPoint) // Use custom entry point
-                );
+         */
 
-//                .httpBasic(            configurer ->
-//                        configurer.securityContextRepository(new HttpSessionSecurityContextRepository()));
+        httpSecurity
+             .csrf(csrf -> csrf.disable())
+             .authorizeHttpRequests(
+                     request-> request
+                             .requestMatchers( AUTH_WHITELIST).permitAll()
+                             .anyRequest().authenticated()
+//
+             )
+             //.formLogin(Customizer.withDefaults())
+ //            .formLogin(form -> form.disable())
+             .addFilterBefore(jwtAuthenticationFilter,
+                     UsernamePasswordAuthenticationFilter.class)
+            .httpBasic(Customizer.withDefaults())
+             //.httpBasic(httpBasic -> httpBasic.disable())
+//
+             .exceptionHandling(exceptionHandling -> exceptionHandling
+//
+//
+                     .authenticationEntryPoint(customAuthenticationEntryPoint) // Use custom entry point
+             );
+
         return httpSecurity.build();
+
 
     }
 
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider provider
+//                = new DaoAuthenticationProvider();
+//        provider.setUserDetailsService(userDetailsService);
+//        provider.setPasswordEncoder(bCryptPasswordEncoder());
+//
+//        return provider;
         DaoAuthenticationProvider provider
-                = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+                = new DaoAuthenticationProvider(userDetailsService);
+        //provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(bCryptPasswordEncoder());
+
+        //this removes the masking of usernamenot found
+        //and sets all exception to bad request : invalid username and password for security reasons
+        provider.setHideUserNotFoundExceptions(false); // This line changes the behavior
 
         return provider;
 
     }
+
+//    @Bean
+//    public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+//        authProvider.setPasswordEncoder(passwordEncoder);
+//        return authProvider;
+//    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -118,18 +145,18 @@ public class WebSecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        return new CustomAuthenticationFailureHandler();
-    }
-
-
-    // Example for Basic Auth: Create a custom entry point to use your failure handler
-    @Bean
-    public CustomAuthenticationEntryPoint customBasicAuthenticationEntryPoint() {
-        CustomAuthenticationEntryPoint entryPoint = new CustomAuthenticationEntryPoint();
-
-        return entryPoint;
-    }
+//    @Bean
+//    public AuthenticationFailureHandler authenticationFailureHandler() {
+//        return new CustomAuthenticationFailureHandler();
+//    }
+//
+//
+//    // Example for Basic Auth: Create a custom entry point to use your failure handler
+//    @Bean
+//    public CustomAuthenticationEntryPoint customBasicAuthenticationEntryPoint() {
+//        CustomAuthenticationEntryPoint entryPoint = new CustomAuthenticationEntryPoint();
+//
+//        return entryPoint;
+//    }
 }
 

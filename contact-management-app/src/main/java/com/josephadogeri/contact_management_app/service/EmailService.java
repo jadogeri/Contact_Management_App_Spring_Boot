@@ -75,4 +75,11 @@ public class EmailService {
 
     }
 
+    public void sendLckedAccountEmail(EmailRequest emailRequest, Map<String, Object> context) throws MessagingException, IOException {
+
+        String htmlContent = generateEmailContent(TemplateNameUtil.DEACTIVATE_TEMPLATE_NAME, context);
+        sendTemplatedEmail(emailRequest, htmlContent, context);
+
+    }
+
 }

@@ -50,15 +50,19 @@ public class JwtService {
     }
 
     public String extractUserName(String token) {
+        System.out.println("extractUserName: " + token);
         return extractClaims(token, Claims::getSubject);
     }
 
     private <T> T extractClaims(String token, Function<Claims,T> claimResolver) {
+
+        System.out.println("claims == "+claimResolver+ "token=="+token);
         Claims claims = extractClaims(token);
         return claimResolver.apply(claims);
     }
 
     private Claims extractClaims(String token) {
+        System.out.println("token generated == " + token);
         return Jwts
                 .parser()
                 .verifyWith(generateKey())
@@ -68,6 +72,9 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        System.out.println("token validated == " + token);
+        System.out.println("userDetails " + userDetails);
+
         final String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }

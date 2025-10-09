@@ -1,4 +1,4 @@
-package com.josephadogeri.contact_management_app.tool;
+package com.josephadogeri.contact_management_app.utils;
 
 import java.security.SecureRandom;
 import java.util.Collections;
