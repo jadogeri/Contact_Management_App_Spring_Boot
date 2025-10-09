@@ -98,7 +98,7 @@ public class UserService {
 
     }
 
-    public String verify(User user) {
+    public String verify(User user) throws MessagingException, IOException {
         try{
             Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

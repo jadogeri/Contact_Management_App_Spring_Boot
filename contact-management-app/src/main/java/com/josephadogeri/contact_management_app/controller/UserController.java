@@ -38,7 +38,7 @@ public class UserController extends Auditable implements UserDocumentation {
         return userService.register(user);
     }
     @PostMapping("/login")
-    public String login(@RequestBody User user){
+    public String login(@RequestBody User user) throws MessagingException, IOException {
 
         return userService.verify(user);
     }

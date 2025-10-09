@@ -32,7 +32,7 @@ public interface UserDocumentation {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public String login(@RequestBody User user);
+    public String login(@RequestBody User user) throws MessagingException, IOException;
 
     @Operation(
             summary = "Fetch New User",
