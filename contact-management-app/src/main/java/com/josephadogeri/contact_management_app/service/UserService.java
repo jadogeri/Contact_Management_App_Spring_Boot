@@ -1,11 +1,10 @@
 package com.josephadogeri.contact_management_app.service;
 
 
-import com.josephadogeri.contact_management_app.dto.request.EmailRequest;
-import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
-import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
-import com.josephadogeri.contact_management_app.dto.request.UserResetPasswordRequestDTO;
+import com.josephadogeri.contact_management_app.dto.request.*;
+import com.josephadogeri.contact_management_app.dto.response.UserForgotPasswordResponseDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserResetPasswordResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.exceptions.AccountLockedException;
 import com.josephadogeri.contact_management_app.exceptions.CustomAuthenticationFailureHandler;
@@ -15,6 +14,7 @@ import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.utils.CredentialsValidatorUtil;
 import com.josephadogeri.contact_management_app.utils.PasswordGenerator;
 import jakarta.mail.MessagingException;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +25,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -136,7 +138,7 @@ public class UserService {
         }
     }
 
-    public String resetPassword(UserResetPasswordRequestDTO userResetPasswordRequestDTO) throws MessagingException, IOException {
+    public UserForgotPasswordResponseDTO forgotPassword(UserForgotPasswordRequestDTO userResetPasswordRequestDTO) throws MessagingException, IOException {
         String email = userResetPasswordRequestDTO.getEmail();
 
         if(email == null ){
@@ -163,7 +165,26 @@ public class UserService {
         // send new password to user
 
 
-        return "";
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setTo(user.getEmail());
+        emailRequest.setSubject("Forgot Password");
+        context = new HashMap<>();
+        context.put("username", user.getUsername());
+        context.put("email", user.getEmail());
+        context.put("temporaryPassword", generatedPassword);
+        context.put("year", String.valueOf(LocalDate.now().getYear()));
+
+        emailService.sendForgotPasswordEmail(emailRequest, context);
+        
+        //send http response
+        UserForgotPasswordResponseDTO userResetPasswordResponseDTO = new UserForgotPasswordResponseDTO(generatedPassword);
+
+        return userResetPasswordResponseDTO;
+    }
+
+    public UserResetPasswordResponseDTO resetPassword(UserResetPasswordRequestDTO user) {
+
+        return new UserResetPasswordResponseDTO("password");
     }
 }
 

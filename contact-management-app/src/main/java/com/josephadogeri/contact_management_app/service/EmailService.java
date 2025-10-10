@@ -63,6 +63,7 @@ public class EmailService {
 
     public void sendForgotPasswordEmail(EmailRequest emailRequest, Map<String, Object> context) throws MessagingException, IOException {
 
+        System.out.println("sending email...............................");
         String htmlContent = generateEmailContent(TemplateNameUtil.FORGOT_PASSWORD_TEMPLATE_NAME, context);
         sendTemplatedEmail(emailRequest, htmlContent, context);
 

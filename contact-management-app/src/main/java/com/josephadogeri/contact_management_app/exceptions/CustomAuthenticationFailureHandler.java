@@ -80,7 +80,7 @@ public class CustomAuthenticationFailureHandler {
                 context.put("username", user.getUsername());
                 context.put("email", user.getEmail());
                 context.put("year", String.valueOf(LocalDate.now().getYear()));
-                emailService.sendLckedAccountEmail(emailRequest, context);
+                //emailService.sendLckedAccountEmail(emailRequest, context);
                 throw new AccountLockedException("accoutn is cuuuuuurentlllllllly llooooooooooooced");
 
             }

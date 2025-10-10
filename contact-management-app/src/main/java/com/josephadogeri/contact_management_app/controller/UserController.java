@@ -4,17 +4,18 @@ package com.josephadogeri.contact_management_app.controller;
 
 import com.josephadogeri.contact_management_app.Auditable;
 import com.josephadogeri.contact_management_app.documentation.UserDocumentation;
+import com.josephadogeri.contact_management_app.dto.request.UserForgotPasswordRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserResetPasswordRequestDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserForgotPasswordResponseDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserResetPasswordResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -45,14 +46,14 @@ public class UserController extends Auditable implements UserDocumentation {
         return userService.verify(user);
     }
     @PostMapping("/reset-password")
-    public String resetPassword(@RequestBody UserResetPasswordRequestDTO user) throws MessagingException, IOException {
+    public UserResetPasswordResponseDTO resetPassword(@RequestBody UserResetPasswordRequestDTO user) throws MessagingException, IOException {
 
         return userService.resetPassword(user);    }
 
     @PostMapping("/forgot-password")
-    public String forgotPassword(@RequestBody User user){
+    public UserForgotPasswordResponseDTO forgotPassword(@RequestBody UserForgotPasswordRequestDTO user) throws MessagingException, IOException {
 
-        return "forgot password";
+        return userService.forgotPassword(user);
     }
 
     @PostMapping("/deactivate")

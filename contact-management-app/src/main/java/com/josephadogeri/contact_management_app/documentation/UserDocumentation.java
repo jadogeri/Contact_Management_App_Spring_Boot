@@ -1,9 +1,12 @@
 package com.josephadogeri.contact_management_app.documentation;
 
+import com.josephadogeri.contact_management_app.dto.request.UserForgotPasswordRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
 import com.josephadogeri.contact_management_app.dto.request.UserResetPasswordRequestDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserForgotPasswordResponseDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserResetPasswordResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -56,7 +59,7 @@ public interface UserDocumentation {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public String resetPassword(@RequestBody UserResetPasswordRequestDTO user) throws MessagingException, IOException;
+    public UserResetPasswordResponseDTO resetPassword(@RequestBody UserResetPasswordRequestDTO user) throws MessagingException, IOException;
 
     @Operation(
             summary = "Fetch New User",
@@ -64,7 +67,7 @@ public interface UserDocumentation {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public String forgotPassword(@RequestBody User user);
+    public UserForgotPasswordResponseDTO forgotPassword(@RequestBody UserForgotPasswordRequestDTO user) throws MessagingException, IOException;
 
     @Operation(
             summary = "Fetch New User",
