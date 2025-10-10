@@ -72,6 +72,7 @@ public class EmailService {
 
     public void sendDeactivatedAccountEmail(EmailRequest emailRequest, Map<String, Object> context) throws MessagingException, IOException {
 
+        System.out.println("sending deactivatio account email...............................");
         String htmlContent = generateEmailContent(TemplateNameUtil.ACCOUNT_DEACTIVATION_TEMPLATE_NAME, context);
         sendTemplatedEmail(emailRequest, htmlContent, context);
 
