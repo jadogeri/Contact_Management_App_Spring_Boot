@@ -1,10 +1,8 @@
 package com.josephadogeri.contact_management_app.documentation;
 
-import com.josephadogeri.contact_management_app.dto.request.UserForgotPasswordRequestDTO;
-import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
-import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
-import com.josephadogeri.contact_management_app.dto.request.UserResetPasswordRequestDTO;
+import com.josephadogeri.contact_management_app.dto.request.*;
 import com.josephadogeri.contact_management_app.dto.response.UserForgotPasswordResponseDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserLoginResponseDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserResetPasswordResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
@@ -51,7 +49,7 @@ public interface UserDocumentation {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public String login(@RequestBody UserLoginRequestDTO user) throws MessagingException, IOException;
+    public UserLoginResponseDTO login(@RequestBody UserLoginRequestDTO user) throws MessagingException, IOException;
 
     @Operation(
             summary = "Fetch New User",
@@ -75,5 +73,5 @@ public interface UserDocumentation {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public String deactivate(@RequestBody User user);
+    public UserDeactivateResponseDTO deactivate(@RequestBody UserDeactivateRequestDTO user);
 }

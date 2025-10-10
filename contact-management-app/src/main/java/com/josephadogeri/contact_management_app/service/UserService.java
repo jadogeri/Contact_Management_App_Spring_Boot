@@ -3,6 +3,7 @@ package com.josephadogeri.contact_management_app.service;
 
 import com.josephadogeri.contact_management_app.dto.request.*;
 import com.josephadogeri.contact_management_app.dto.response.UserForgotPasswordResponseDTO;
+import com.josephadogeri.contact_management_app.dto.response.UserLoginResponseDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
 import com.josephadogeri.contact_management_app.dto.response.UserResetPasswordResponseDTO;
 import com.josephadogeri.contact_management_app.entity.User;
@@ -14,19 +15,18 @@ import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.utils.CredentialsValidatorUtil;
 import com.josephadogeri.contact_management_app.utils.PasswordGenerator;
 import jakarta.mail.MessagingException;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,6 +92,8 @@ public class UserService {
         context = new HashMap<>();
         context.put("username", user.getUsername());
         context.put("email", user.getEmail());
+        context.put("companyName", "Spring Boot");
+        context.put("logoUrl", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Spring_Framework_Logo_2018.svg/1200px-Spring_Framework_Logo_2018.svg.png");
 
         emailService.sendWelcomeEmail(emailRequest, context);
         //return user;
@@ -104,7 +106,7 @@ public class UserService {
 
     }
 
-    public String verify(UserLoginRequestDTO userLoginRequestDTO) throws MessagingException, IOException {
+    public UserLoginResponseDTO verify(UserLoginRequestDTO userLoginRequestDTO) throws MessagingException, IOException {
         User user = null;
 
         try{
@@ -123,18 +125,18 @@ public class UserService {
 
             if (authenticate.isAuthenticated()) {
                 customAuthenticationSuccessHandler.onAuthenticationSuccess(user.getUsername());
-                return jwtService.generateToken(user);
+                String accessToken = jwtService.generateToken(user);
+                return new UserLoginResponseDTO(accessToken);
             }else{
-                System.out.println("invalid password");
-                return "fail";
+                throw new BadCredentialsException("Invalid username or password");
             }
         } catch (BadCredentialsException e) {
             // Handle invalid password specifically
             customAuthenticationFailureHandler.onAuthenticationFailure(user.getUsername());
-            return ("resting data Invalid username or password");
+            throw new BadCredentialsException("resting data Invalid username or password");
         } catch (AuthenticationException e) {
             // Handle other authentication errors
-            return ("Authentication failed");
+            throw new IllegalArgumentException("Invalid username or password");
         }
     }
 
@@ -173,7 +175,8 @@ public class UserService {
         context.put("email", user.getEmail());
         context.put("temporaryPassword", generatedPassword);
         context.put("year", String.valueOf(LocalDate.now().getYear()));
-
+        context.put("companyName", "Spring Boot");
+        context.put("logoUrl", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Spring_Framework_Logo_2018.svg/1200px-Spring_Framework_Logo_2018.svg.png");
         emailService.sendForgotPasswordEmail(emailRequest, context);
         
         //send http response
@@ -182,9 +185,54 @@ public class UserService {
         return userResetPasswordResponseDTO;
     }
 
-    public UserResetPasswordResponseDTO resetPassword(UserResetPasswordRequestDTO user) {
+    public UserResetPasswordResponseDTO resetPassword(UserResetPasswordRequestDTO userResetPasswordRequestDTO) throws MessagingException, IOException {
+        User user = null;
+        if(userResetPasswordRequestDTO.getNewPassword() == null || userResetPasswordRequestDTO.getOldPassword() == null
+        || userResetPasswordRequestDTO.getConfirmNewPassword() == null || userResetPasswordRequestDTO.getUsername() == null){
+            throw new IllegalArgumentException("all fields are required");
+        }
+        if(!userResetPasswordRequestDTO.getNewPassword().equals(userResetPasswordRequestDTO.getConfirmNewPassword())){
+            throw new IllegalArgumentException("passwords do not match");
+        }
 
-        return new UserResetPasswordResponseDTO("password");
+        if(!credentialsValidatorUtil.isValidPassword(userResetPasswordRequestDTO.getNewPassword())){
+            throw new IllegalArgumentException("not a valid password");
+        }
+
+        try {
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userResetPasswordRequestDTO.getUsername(), userResetPasswordRequestDTO.getOldPassword()
+                    )
+            );
+            if (!authenticate.isAuthenticated()) {
+                throw new IllegalArgumentException("invalid username or old password");
+            }
+
+        }catch (BadCredentialsException e){
+            throw new BadCredentialsException("bad credentials");
+        }
+        user = userRepository.findByUsername(userResetPasswordRequestDTO.getUsername());
+        String encodedPassword = bCryptPasswordEncoder.encode(userResetPasswordRequestDTO.getNewPassword());
+        user.setPassword(encodedPassword);
+        user.setEnabled(true);
+        user.setFailedAttempts(0);
+        userRepository.save(user);
+
+        //send successful reset email to user
+
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setTo(user.getEmail());
+        emailRequest.setSubject("Reset Password");
+        context = new HashMap<>();
+        context.put("username", user.getUsername());
+        context.put("email", user.getEmail());
+        context.put("year", String.valueOf(LocalDate.now().getYear()));
+        context.put("companyName", "Spring Boot");
+        context.put("logoUrl", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Spring_Framework_Logo_2018.svg/1200px-Spring_Framework_Logo_2018.svg.png");
+        emailService.sendResetPasswordEmail(emailRequest, context);
+
+        return new UserResetPasswordResponseDTO("Successfully reset your password");
     }
 }
 

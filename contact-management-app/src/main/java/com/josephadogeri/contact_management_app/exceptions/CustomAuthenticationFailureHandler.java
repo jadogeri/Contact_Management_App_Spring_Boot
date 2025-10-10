@@ -67,6 +67,8 @@ public class CustomAuthenticationFailureHandler {
                     Map<String,Object> context = new HashMap<>();
                     context.put("username", user.getUsername());
                     context.put("email", user.getEmail());
+                    context.put("companyName", "Spring Boot");
+                    context.put("logoUrl", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Spring_Framework_Logo_2018.svg/1200px-Spring_Framework_Logo_2018.svg.png");
                     context.put("year", String.valueOf(LocalDate.now().getYear()));
                     emailService.sendLckedAccountEmail(emailRequest, context);
                     throw new AccountLockedException("accoutn is llooooooooooooced");
@@ -80,6 +82,8 @@ public class CustomAuthenticationFailureHandler {
                 context.put("username", user.getUsername());
                 context.put("email", user.getEmail());
                 context.put("year", String.valueOf(LocalDate.now().getYear()));
+                context.put("companyName", "Spring Boot");
+                context.put("logoUrl", "/static/images/logo.png");
                 //emailService.sendLckedAccountEmail(emailRequest, context);
                 throw new AccountLockedException("accoutn is cuuuuuurentlllllllly llooooooooooooced");
 

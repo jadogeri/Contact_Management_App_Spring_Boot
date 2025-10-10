@@ -23,6 +23,9 @@ public class WebSecurityConfig {
     private final UserDetailsService userDetailsService;
 
     private static final String[] AUTH_WHITELIST = {
+            // Email
+            "/images/**",
+            "/static/**",
             // Swagger UI v2
             "/v2/api-docs",
             "/swagger-ui.html",

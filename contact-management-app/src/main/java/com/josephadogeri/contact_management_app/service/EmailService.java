@@ -32,6 +32,7 @@ public class EmailService {
         this.mailSender = javaMailSender;
         this.mimeMessage = mailSender.createMimeMessage();
         this.mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
     }
 
     private String generateEmailContent(String templateName, Map<String, Object> context) throws IOException {

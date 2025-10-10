@@ -2,7 +2,7 @@ package com.josephadogeri.contact_management_app.abstracts;
 
 import com.josephadogeri.contact_management_app.Auditable;
 
-public abstract class PasswordBase extends Auditable {
+public abstract class PasswordBase{
 
     private String password;
 
