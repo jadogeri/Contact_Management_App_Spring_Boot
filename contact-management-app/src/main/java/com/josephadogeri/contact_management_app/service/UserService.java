@@ -12,6 +12,7 @@ import com.josephadogeri.contact_management_app.exceptions.CustomAuthenticationF
 import com.josephadogeri.contact_management_app.exceptions.CustomAuthenticationSuccessHandler;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.utils.CredentialsValidatorUtil;
+import com.josephadogeri.contact_management_app.utils.PasswordGenerator;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -149,6 +150,17 @@ public class UserService {
         if(user == null){
             throw new RuntimeException("user not found by email");
         }
+        //generate password and encode it , then save to
+        //database and send user the new password to reset account
+        String generatedPassword = PasswordGenerator.generateStrongPassword(10);
+        System.out.println("genrated password ==" +  generatedPassword);
+        //encode password
+        String encodedPassword = bCryptPasswordEncoder.encode(generatedPassword);
+        //update user password and save to database
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+        // send new password to user
+
 
 
         return "";
