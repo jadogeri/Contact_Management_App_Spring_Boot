@@ -2,21 +2,19 @@ package com.josephadogeri.contact_management_app.dto.response;
 
 import com.josephadogeri.contact_management_app.abstracts.AbstractAuthCredentials;
 
-public class UserDeactivateResponseDTO extends AbstractAuthCredentials {
+public class UserDeactivateResponseDTO {
 
-    private boolean confirm;
+    private String message;
 
-    public UserDeactivateResponseDTO(String username, String password, boolean confirm) {
+    public UserDeactivateResponseDTO(String message) {
 
-        super(username, password);
-        this.confirm = confirm;
+        this.message = message;
     }
-    public boolean isConfirm() {
 
-        return confirm;
+    public String getMessage() {
+        return message;
     }
-    public void setConfirm(boolean confirm) {
-        this.confirm = confirm;
-
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

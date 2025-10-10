@@ -2,10 +2,7 @@ package com.josephadogeri.contact_management_app.service;
 
 
 import com.josephadogeri.contact_management_app.dto.request.*;
-import com.josephadogeri.contact_management_app.dto.response.UserForgotPasswordResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserLoginResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserResetPasswordResponseDTO;
+import com.josephadogeri.contact_management_app.dto.response.*;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.exceptions.AccountLockedException;
 import com.josephadogeri.contact_management_app.exceptions.CustomAuthenticationFailureHandler;
@@ -233,6 +230,72 @@ public class UserService {
         emailService.sendResetPasswordEmail(emailRequest, context);
 
         return new UserResetPasswordResponseDTO("Successfully reset your password");
+    }
+
+    public UserDeactivateResponseDTO deactivate(UserDeactivateRequestDTO userDeactivateRequestDTO) throws ResourceNotFoundException, MessagingException, IOException {
+
+        System.out.println("calling deactivate ......................................");
+        User user = null;
+        if(!userDeactivateRequestDTO.isConfirm()  || userDeactivateRequestDTO.getPassword() == null ||
+           userDeactivateRequestDTO.getUsername() == null){
+            throw new IllegalArgumentException("all fields are required");
+        }
+
+        try {
+            System.out.println("inside try ......................................");
+
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userDeactivateRequestDTO.getUsername(), userDeactivateRequestDTO.getPassword()
+                    )
+            );
+            if (!authenticate.isAuthenticated()) {
+                System.out.println("not authenticated ......................................");
+
+                throw new IllegalArgumentException("invalid username or old password");
+            }
+
+        }catch (BadCredentialsException e){
+            System.out.println("bad credentials ......................................");
+
+            throw new BadCredentialsException("bad credentials");
+        }
+        System.out.println("outside of try catch block......................................");
+
+        //retrieve user before deactivation and get email
+        user = userRepository.findByUsername(userDeactivateRequestDTO.getUsername());
+        System.out.println("printing user from database..................................." + user.getId() + " " + user.getUsername());
+        //delete user from database
+        System.out.println("before delete user from db......................................");
+
+        userRepository.deleteById(user.getId());
+
+        User deleteUserFound = userRepository.findByUsername(userDeactivateRequestDTO.getUsername());
+        System.out.println("after delte user from db......................................");
+
+        if(deleteUserFound != null){
+            System.out.println("resource not found ......................................");
+
+            throw new ResourceNotFoundException("user not found !! did not deactivate the user");
+
+        }else{
+            //send email to user of account deactivation
+            EmailRequest emailRequest = new EmailRequest();
+            emailRequest.setTo(user.getEmail());
+            emailRequest.setSubject("Reset Password");
+            context = new HashMap<>();
+            context.put("username", user.getUsername());
+            context.put("email", user.getEmail());
+            context.put("year", String.valueOf(LocalDate.now().getYear()));
+            context.put("companyName", "Spring Boot");
+            context.put("logoUrl", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Spring_Framework_Logo_2018.svg/1200px-Spring_Framework_Logo_2018.svg.png");
+            emailService.sendDeactivatedAccountEmail(emailRequest, context);
+
+            //send http response using DTO
+            return new UserDeactivateResponseDTO("Successfully deactivated your password");
+
+        }
+
     }
 }
 

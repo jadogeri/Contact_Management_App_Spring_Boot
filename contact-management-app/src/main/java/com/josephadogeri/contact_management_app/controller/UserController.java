@@ -4,14 +4,8 @@ package com.josephadogeri.contact_management_app.controller;
 
 import com.josephadogeri.contact_management_app.Auditable;
 import com.josephadogeri.contact_management_app.documentation.UserDocumentation;
-import com.josephadogeri.contact_management_app.dto.request.UserForgotPasswordRequestDTO;
-import com.josephadogeri.contact_management_app.dto.request.UserLoginRequestDTO;
-import com.josephadogeri.contact_management_app.dto.request.UserRegistrationRequestDTO;
-import com.josephadogeri.contact_management_app.dto.request.UserResetPasswordRequestDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserForgotPasswordResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserLoginResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserResetPasswordResponseDTO;
+import com.josephadogeri.contact_management_app.dto.request.*;
+import com.josephadogeri.contact_management_app.dto.response.*;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.service.UserService;
@@ -57,9 +51,9 @@ public class UserController extends Auditable implements UserDocumentation {
         return userService.forgotPassword(user);
     }
 
-    @PostMapping("/deactivate")
-    public String deactivate(@RequestBody User user){
+    @DeleteMapping("/deactivate")
+    public UserDeactivateResponseDTO deactivate(@RequestBody UserDeactivateRequestDTO userDeactivateRequestDTO) throws MessagingException, IOException {
 
-        return "deactivate account";
+        return userService.deactivate(userDeactivateRequestDTO);
     }
 }

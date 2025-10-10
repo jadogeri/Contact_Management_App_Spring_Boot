@@ -70,14 +70,14 @@ public class EmailService {
 
     }
 
-    public void sendDeactivateAccountEmail(EmailRequest emailRequest, Map<String, Object> context) throws MessagingException, IOException {
+    public void sendDeactivatedAccountEmail(EmailRequest emailRequest, Map<String, Object> context) throws MessagingException, IOException {
 
-        String htmlContent = generateEmailContent(TemplateNameUtil.DEACTIVATE_TEMPLATE_NAME, context);
+        String htmlContent = generateEmailContent(TemplateNameUtil.ACCOUNT_DEACTIVATION_TEMPLATE_NAME, context);
         sendTemplatedEmail(emailRequest, htmlContent, context);
 
     }
 
-    public void sendLckedAccountEmail(EmailRequest emailRequest, Map<String, Object> context) throws MessagingException, IOException {
+    public void sendLockedAccountEmail(EmailRequest emailRequest, Map<String, Object> context) throws MessagingException, IOException {
 
         String htmlContent = generateEmailContent(TemplateNameUtil.ACCOUNT_LOCKED_TEMPLATE_NAME, context);
         sendTemplatedEmail(emailRequest, htmlContent, context);

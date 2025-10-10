@@ -1,10 +1,7 @@
 package com.josephadogeri.contact_management_app.documentation;
 
 import com.josephadogeri.contact_management_app.dto.request.*;
-import com.josephadogeri.contact_management_app.dto.response.UserForgotPasswordResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserLoginResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserRegistrationResponseDTO;
-import com.josephadogeri.contact_management_app.dto.response.UserResetPasswordResponseDTO;
+import com.josephadogeri.contact_management_app.dto.response.*;
 import com.josephadogeri.contact_management_app.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -73,5 +70,5 @@ public interface UserDocumentation {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public UserDeactivateResponseDTO deactivate(@RequestBody UserDeactivateRequestDTO user);
+    public UserDeactivateResponseDTO deactivate(@RequestBody UserDeactivateRequestDTO user) throws MessagingException, IOException;
 }
