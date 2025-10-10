@@ -10,6 +10,7 @@ import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.exceptions.AccountLockedException;
 import com.josephadogeri.contact_management_app.exceptions.CustomAuthenticationFailureHandler;
 import com.josephadogeri.contact_management_app.exceptions.CustomAuthenticationSuccessHandler;
+import com.josephadogeri.contact_management_app.exceptions.ResourceNotFoundException;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.utils.CredentialsValidatorUtil;
 import jakarta.mail.MessagingException;
@@ -147,9 +148,8 @@ public class UserService {
 
         User user = userRepository.findByEmail(email);
         if(user == null){
-            throw new RuntimeException("user not found by email");
+            throw new ResourceNotFoundException("user not found by email");
         }
-
 
         return "";
     }
