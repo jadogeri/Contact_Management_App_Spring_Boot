@@ -1,6 +1,6 @@
 package com.josephadogeri.contact_management_app;
 
-import com.josephadogeri.contact_management_app.entity.User;
+import com.josephadogeri.contact_management_app.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
