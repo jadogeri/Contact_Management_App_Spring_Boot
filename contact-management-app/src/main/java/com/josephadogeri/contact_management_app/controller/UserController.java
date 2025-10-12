@@ -1,12 +1,9 @@
 package com.josephadogeri.contact_management_app.controller;
 
-
-
 import com.josephadogeri.contact_management_app.Auditable;
 import com.josephadogeri.contact_management_app.documentation.UserDocumentation;
 import com.josephadogeri.contact_management_app.dto.request.*;
 import com.josephadogeri.contact_management_app.dto.response.*;
-import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.service.UserService;
 import jakarta.mail.MessagingException;

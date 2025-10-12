@@ -7,7 +7,6 @@ public abstract class PasswordBase{
     private String password;
 
     public PasswordBase(String password) {
-        super();
         this.password = password;
     }
     public String getPassword()

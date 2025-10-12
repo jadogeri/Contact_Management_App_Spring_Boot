@@ -42,7 +42,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring(7);
-        System.out.println("token " + jwt);
         final String userName = jwtService.extractUserName(jwt);
 
         Authentication authentication

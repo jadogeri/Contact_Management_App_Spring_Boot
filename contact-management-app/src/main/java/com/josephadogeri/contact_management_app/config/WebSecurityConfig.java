@@ -64,30 +64,6 @@ public class WebSecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults());
 
-
-
-
-//        httpSecurity
-//             .csrf(csrf -> csrf.disable())
-//             .authorizeHttpRequests(
-//                     request-> request
-//                             .requestMatchers( AUTH_WHITELIST).permitAll()
-//                             .anyRequest().authenticated()
-////
-//             )
-//             //.formLogin(Customizer.withDefaults())
-// //            .formLogin(form -> form.disable())
-//             .addFilterBefore(jwtAuthenticationFilter,
-//                     UsernamePasswordAuthenticationFilter.class)
-//            .httpBasic(Customizer.withDefaults())
-//             //.httpBasic(httpBasic -> httpBasic.disable())
-////
-//             .exceptionHandling(exceptionHandling -> exceptionHandling
-////
-////
-//                     .authenticationEntryPoint(customAuthenticationEntryPoint) // Use custom entry point
-//             );
-
         return httpSecurity.build();
 
 
@@ -96,15 +72,8 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider provider
-//                = new DaoAuthenticationProvider();
-//        provider.setUserDetailsService(userDetailsService);
-//        provider.setPasswordEncoder(bCryptPasswordEncoder());
-//
-//        return provider;
         DaoAuthenticationProvider provider
                 = new DaoAuthenticationProvider(userDetailsService);
-        //provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(bCryptPasswordEncoder());
 
         //this removes the masking of usernamenot found
@@ -114,13 +83,6 @@ public class WebSecurityConfig {
         return provider;
 
     }
-
-//    @Bean
-//    public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
-//        authProvider.setPasswordEncoder(passwordEncoder);
-//        return authProvider;
-//    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -133,18 +95,5 @@ public class WebSecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-//    @Bean
-//    public AuthenticationFailureHandler authenticationFailureHandler() {
-//        return new CustomAuthenticationFailureHandler();
-//    }
-//
-//
-//    // Example for Basic Auth: Create a custom entry point to use your failure handler
-//    @Bean
-//    public CustomAuthenticationEntryPoint customBasicAuthenticationEntryPoint() {
-//        CustomAuthenticationEntryPoint entryPoint = new CustomAuthenticationEntryPoint();
-//
-//        return entryPoint;
-//    }
 }
 

@@ -1,6 +1,7 @@
 package com.josephadogeri.contact_management_app.service;
 
 import com.josephadogeri.contact_management_app.CustomUserDetails;
+import com.josephadogeri.contact_management_app.controller.ContactController;
 import com.josephadogeri.contact_management_app.dto.request.*;
 import com.josephadogeri.contact_management_app.dto.response.*;
 import com.josephadogeri.contact_management_app.entity.Contact;
@@ -24,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -325,6 +327,56 @@ public class ContactService {
         Contact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("contact not found"));
 
+        return contact;
+    }
+
+    public ContactDeleteSingleResponseDTO deleteSingleContact(Integer id) {
+        Contact contact = contactRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("contact not found"));
+        contactRepository.deleteById(id);
+        ContactDeleteSingleResponseDTO contactDeleteSingleResponseDTO
+                = new ContactDeleteSingleResponseDTO("Successfully deleted the contact with id " + id);
+
+        return contactDeleteSingleResponseDTO;
+
+    }
+
+    @Transactional
+    public ContactDeleteAllResponseDTO deleteAllContacts() {
+
+        User user = userRepository.findByUsername(getAuthenticatedUsername());
+        if(user == null){
+            throw new ResourceNotFoundException("user '" + user.getUsername()+"'with id " + user.getId()+ " not found");
+        }
+
+        user.getContacts().clear();
+        userRepository.save(user);
+        ContactDeleteAllResponseDTO contactDeleteAllResponseDTO
+                = new ContactDeleteAllResponseDTO("Successfully deleted all the contacts");
+
+        return contactDeleteAllResponseDTO;
+
+
+
+    }
+
+    public Contact updateContact(Integer id, ContactUpdateRequestDTO contactUpdateRequestDTO) {
+
+        System.out.println("update contact id :" + id);
+        System.out.println("update contact name :" + contactUpdateRequestDTO.getName());
+        System.out.println("callingcontact  repo befo.................................................");
+        Contact contact = contactRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("contact not found with id " + id));
+        System.out.println("calling contactrepoafter.................................................");
+
+        contact.setName(contactUpdateRequestDTO.getName());
+        contact.setPhone(contactUpdateRequestDTO.getPhone());
+        contact.setEmail(contactUpdateRequestDTO.getEmail());
+        System.out.println("calling contact befo save befoafter.................................................");
+
+        contactRepository.save(contact);
+        System.out.println("calling contactrepo savinggggg.................................................");
+
+        //return updated contact
         return contact;
     }
 }

@@ -67,7 +67,6 @@ public class JwtService {
     }
 
     private Claims extractClaims(String token) {
-        System.out.println("token generated == " + token);
         return Jwts
                 .parser()
                 .verifyWith(generateKey())
@@ -77,7 +76,6 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        System.out.println("token validated == " + token);
         System.out.println("userDetails " + userDetails);
 
         final String userName = extractUserName(token);
