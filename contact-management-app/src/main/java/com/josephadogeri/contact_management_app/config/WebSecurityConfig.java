@@ -1,6 +1,5 @@
 package com.josephadogeri.contact_management_app.config;
 
-import com.josephadogeri.contact_management_app.oldcode.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,15 +42,10 @@ public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter  jwtAuthenticationFilter;
 
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-
     @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter, CustomAuthenticationEntryPoint customAuthenticationEntryPoint//, CustomAuthenticationEntryPoint customAuthenticationEntryPoint
-    ) {
+    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter ) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        //this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
-        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean

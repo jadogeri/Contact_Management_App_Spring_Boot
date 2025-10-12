@@ -20,14 +20,10 @@ import java.io.IOException;
 public class UserController extends Auditable implements UserDocumentation {
 
     @Autowired
-    private final UserRepository userRepository;
-
-    @Autowired
     private final UserService userService;
 
     public UserController(UserService userService,UserRepository userRepository) {
         this.userService = userService;
-        this.userRepository = userRepository;
     }
 
     @PostMapping("/register")

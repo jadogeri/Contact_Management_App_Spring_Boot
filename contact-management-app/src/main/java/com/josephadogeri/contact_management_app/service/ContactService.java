@@ -1,12 +1,15 @@
 package com.josephadogeri.contact_management_app.service;
 
+import com.josephadogeri.contact_management_app.CustomUserDetails;
 import com.josephadogeri.contact_management_app.dto.request.*;
 import com.josephadogeri.contact_management_app.dto.response.*;
+import com.josephadogeri.contact_management_app.entity.Contact;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.exceptions.AccountLockedException;
+import com.josephadogeri.contact_management_app.exceptions.ResourceNotFoundException;
 import com.josephadogeri.contact_management_app.handler.CustomAuthenticationFailureHandler;
 import com.josephadogeri.contact_management_app.handler.CustomAuthenticationSuccessHandler;
-import com.josephadogeri.contact_management_app.exceptions.ResourceNotFoundException;
+import com.josephadogeri.contact_management_app.repository.ContactRepository;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
 import com.josephadogeri.contact_management_app.utils.CredentialsValidatorUtil;
 import com.josephadogeri.contact_management_app.utils.PasswordGenerator;
@@ -17,15 +20,23 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class ContactService {
 
+    @Autowired
+    private final ContactRepository contactRepository;
     @Autowired
     private final UserRepository userRepository;
     @Autowired
@@ -44,14 +55,31 @@ public class UserService {
     @Autowired
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
+    public ContactService(ContactRepository contactRepository, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
 
+        this.contactRepository = contactRepository;
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.credentialsValidatorUtil = new CredentialsValidatorUtil();
+
+
+    }
+
+    public String getAuthenticatedUsername() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+            return username;
+        }
+
+        return "Anonymous";
     }
 
     public UserRegistrationResponseDTO register(UserRegistrationRequestDTO userRegistrationRequestDTO) throws MessagingException, IOException {
@@ -248,6 +276,56 @@ public class UserService {
 
         }
 
+    }
+
+    public List<Contact> getAllContacts() {
+        System.out.println("find user...................................................");
+
+        User user = userRepository.findByUsername(getAuthenticatedUsername());
+        System.out.println("username :" + user.getUsername());
+        System.out.println("email :" + user.getEmail());
+        System.out.println("password :" + user.getPassword());
+        System.out.println("user :" + user.getUsername());
+        System.out.println("find contacts...................................................");
+
+        System.out.println("user id :" + user.getId());
+
+            ArrayList<Contact> contactList = (ArrayList<Contact>) contactRepository.getAllContactsByUserId(user.getId());
+
+            return contactList;
+
+    }
+
+    public Contact createContact(ContactAddRequestDTO contactAddRequestDTO) {
+        if(contactAddRequestDTO.getEmail() == null && contactAddRequestDTO.getName() == null &&
+           contactAddRequestDTO.getPhone() == null) {
+
+            throw new IllegalArgumentException("at least one field is required");
+        }
+        User user = userRepository.findByUsername(getAuthenticatedUsername());
+        System.out.println("username :" + user.getUsername());
+        System.out.println("email :" + user.getEmail());
+        System.out.println("password :" + user.getPassword());
+        System.out.println("user :" + user.getUsername());
+        System.out.println("find contacts..................................................."+ contactAddRequestDTO);
+        System.out.println("phone :" + contactAddRequestDTO.getPhone());
+        System.out.println("email :" + contactAddRequestDTO.getEmail());
+        System.out.println("name :" + contactAddRequestDTO.getName());
+        Contact contact = new Contact();
+        contact.setName(contactAddRequestDTO.getName());
+        contact.setPhone(contactAddRequestDTO.getPhone());
+        contact.setEmail(contactAddRequestDTO.getEmail());
+
+        contact.setUser(user);
+
+        return contactRepository.save(contact);
+    }
+
+    public Contact getSingleContact(Integer id) {
+        Contact contact = contactRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("contact not found"));
+
+        return contact;
     }
 }
 

@@ -1,7 +1,13 @@
 package com.josephadogeri.contact_management_app.controller;
 
 import com.josephadogeri.contact_management_app.Auditable;
+import com.josephadogeri.contact_management_app.dto.request.ContactAddRequestDTO;
+import com.josephadogeri.contact_management_app.dto.response.ContactAddResponseDTO;
+import com.josephadogeri.contact_management_app.entity.Contact;
 import com.josephadogeri.contact_management_app.entity.User;
+import com.josephadogeri.contact_management_app.repository.UserRepository;
+import com.josephadogeri.contact_management_app.service.ContactService;
+import com.josephadogeri.contact_management_app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,14 +15,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/contacts") // Base URL for all endpoints in this controller
+@RequestMapping("/contacts") // Base URL for all endpoints in this controller
 public class ContactController extends Auditable {
+
+    @Autowired
+    private final ContactService contactService;
 
     private record Product(
             Integer productId,
@@ -31,41 +40,42 @@ public class ContactController extends Auditable {
             )
     );
 
-    //@Autowired // Injects the UserService dependency
-    // private UserService userService;
+    public ContactController(ContactService contactService) {
 
-    // Create a new user
-    @PostMapping // Handles POST requests to /api/users
-//    public ResponseEntity<User> createUser(@RequestBody User user) {
-    public List<Product> createUser() {
+        this.contactService = contactService;
+    }
 
-//        User savedUser = userService.saveUser(user);
-//        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
-        return products;
+    // Create a new Contact
+    @PostMapping // Handles POST requests to /contacts/
+    public Contact createContact(@RequestBody ContactAddRequestDTO contactAddRequestDTO) {
+
+        System.out.println("get usa...................................................");
+        return contactService.createContact(contactAddRequestDTO);
+
     }
 
     // Get all users
     @GetMapping // Handles GET requests to /api/users
 //    public ResponseEntity<List<User>> getAllUsers() {
-    public List<Product> getAllUsers() {
+    public List<Contact> getAllUsers() {
 
-//        List<User> users = userService.getAllUsers();
-//        return new ResponseEntity<>(users, HttpStatus.OK);
-        return products;
+        System.out.println("get usa...................................................");
+        return contactService.getAllContacts();
+
     }
 
     // Get a user by ID
-    @GetMapping("/{id}") // Handles GET requests to /api/users/{id}
-//    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-    public List<Product> getUserById() {
-//        Optional<User> user = userService.getUserById(id);
-//        return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-//                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        return products;
+    @GetMapping("/{id}") // Handles GET requests to /contacts/{id}
+    public Contact getUserById(@PathVariable Integer id) {
+        if(!(id instanceof  Integer) ){
+            throw new IllegalArgumentException(" value must be an integer");
+        }
+
+        return contactService.getSingleContact(id);
     }
 
     // Update an existing user
-    @PutMapping("/{id}") // Handles PUT requests to /api/users/{id}
+    @PutMapping("/{id}") // Handles PUT requests to /contacts/{id}
 //    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
     public List<Product> updateUser() {
 //        User updatedUser = userService.updateUser(id, userDetails);
@@ -95,7 +105,7 @@ public class ContactController extends Auditable {
 
             String currentUserName = authentication.getName();
             return currentUserName;
-           // return "Access Token: " + accessToken;
+            // return "Access Token: " + accessToken;
         } else {
             return "Not a JWT authenticated user.";
         }

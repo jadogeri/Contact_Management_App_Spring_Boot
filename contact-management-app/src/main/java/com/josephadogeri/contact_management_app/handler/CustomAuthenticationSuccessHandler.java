@@ -1,20 +1,13 @@
-package com.josephadogeri.contact_management_app.exceptions;
+package com.josephadogeri.contact_management_app.handler;
 
-import com.josephadogeri.contact_management_app.dto.request.EmailRequest;
 import com.josephadogeri.contact_management_app.entity.User;
 import com.josephadogeri.contact_management_app.repository.UserRepository;
-import com.josephadogeri.contact_management_app.service.EmailService;
 import jakarta.mail.MessagingException;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class CustomAuthenticationSuccessHandler {
