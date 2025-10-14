@@ -75,18 +75,14 @@ public class UserService {
         if(!credentialsValidatorUtil.isValidPassword(password)){
             throw new IllegalArgumentException("Invalid password");
         }
-        System.out.println("create user................................ ");
-
         User user = new User();
         user.setUsername(userRegistrationRequestDTO.getUsername());
         user.setEmail(userRegistrationRequestDTO.getEmail());
         String encodedPassword = bCryptPasswordEncoder.encode(userRegistrationRequestDTO.getPassword());
         user.setPassword(encodedPassword);
 
-        System.out.println("Registering after catch block................................ ");
         // send welcome email to user
         emailService.sendWelcomeEmail(user);
-        System.out.println("after email send................................ ");
 
         //return user;
         User savedUser =  userRepository.save(user);
@@ -94,7 +90,6 @@ public class UserService {
                 = new UserRegistrationResponseDTO(savedUser.getUsername(), savedUser.getEmail());
         userRegistrationResponseDTO.setCreatedAt(savedUser.getCreatedAt());
         userRegistrationResponseDTO.setLastModifiedDate(savedUser.getLastModifiedDate());
-        System.out.println("Registering user response................................ ");
 
         return userRegistrationResponseDTO;
 

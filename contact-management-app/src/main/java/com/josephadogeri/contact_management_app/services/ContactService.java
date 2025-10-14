@@ -84,9 +84,6 @@ public class ContactService {
         String username = userRegistrationRequestDTO.getUsername();
         String password = userRegistrationRequestDTO.getPassword();
         String email = userRegistrationRequestDTO.getEmail();
-        System.out.println("Registering User : "+ username);
-        System.out.println("Registering User : "+ email);
-        System.out.println("Registering User : "+ password);
 
         if(email == null || username == null || password == null){
             throw new IllegalArgumentException("Username, email and password are required");
@@ -101,7 +98,6 @@ public class ContactService {
         if(!credentialsValidatorUtil.isValidPassword(password)){
             throw new IllegalArgumentException("Invalid password");
         }
-        System.out.println("create user................................ ");
 
         User user = new User();
         user.setUsername(userRegistrationRequestDTO.getUsername());
@@ -109,10 +105,8 @@ public class ContactService {
         String encodedPassword = bCryptPasswordEncoder.encode(userRegistrationRequestDTO.getPassword());
         user.setPassword(encodedPassword);
 
-        System.out.println("Registering after catch block................................ ");
         // send welcome email to user
         emailService.sendWelcomeEmail(user);
-        System.out.println("after email send................................ ");
 
         //return user;
         User savedUser =  userRepository.save(user);
@@ -120,7 +114,6 @@ public class ContactService {
                 = new UserRegistrationResponseDTO(savedUser.getUsername(), savedUser.getEmail());
         userRegistrationResponseDTO.setCreatedAt(savedUser.getCreatedAt());
         userRegistrationResponseDTO.setLastModifiedDate(savedUser.getLastModifiedDate());
-        System.out.println("Registering user response................................ ");
 
         return userRegistrationResponseDTO;
 
@@ -277,20 +270,10 @@ public class ContactService {
     }
 
     public List<Contact> getAllContacts() {
-        System.out.println("find user...................................................");
-
         User user = userRepository.findByUsername(getAuthenticatedUsername());
-        System.out.println("username :" + user.getUsername());
-        System.out.println("email :" + user.getEmail());
-        System.out.println("password :" + user.getPassword());
-        System.out.println("user :" + user.getUsername());
-        System.out.println("find contacts...................................................");
+        ArrayList<Contact> contactList = (ArrayList<Contact>) contactRepository.getAllContactsByUserId(user.getId());
 
-        System.out.println("user id :" + user.getId());
-
-            ArrayList<Contact> contactList = (ArrayList<Contact>) contactRepository.getAllContactsByUserId(user.getId());
-
-            return contactList;
+        return contactList;
 
     }
 
@@ -301,14 +284,6 @@ public class ContactService {
             throw new IllegalArgumentException("at least one field is required");
         }
         User user = userRepository.findByUsername(getAuthenticatedUsername());
-        System.out.println("username :" + user.getUsername());
-        System.out.println("email :" + user.getEmail());
-        System.out.println("password :" + user.getPassword());
-        System.out.println("user :" + user.getUsername());
-        System.out.println("find contacts..................................................."+ contactAddRequestDTO);
-        System.out.println("phone :" + contactAddRequestDTO.getPhone());
-        System.out.println("email :" + contactAddRequestDTO.getEmail());
-        System.out.println("name :" + contactAddRequestDTO.getName());
         Contact contact = new Contact();
         contact.setName(contactAddRequestDTO.getName());
         contact.setPhone(contactAddRequestDTO.getPhone());
@@ -358,19 +333,13 @@ public class ContactService {
 
     public Contact updateContact(Integer id, ContactUpdateRequestDTO contactUpdateRequestDTO) {
 
-        System.out.println("update contact id :" + id);
-        System.out.println("update contact name :" + contactUpdateRequestDTO.getName());
-        System.out.println("callingcontact  repo befo.................................................");
         Contact contact = contactRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("contact not found with id " + id));
-        System.out.println("calling contactrepoafter.................................................");
 
         contact.setName(contactUpdateRequestDTO.getName());
         contact.setPhone(contactUpdateRequestDTO.getPhone());
         contact.setEmail(contactUpdateRequestDTO.getEmail());
-        System.out.println("calling contact befo save befoafter.................................................");
 
         contactRepository.save(contact);
-        System.out.println("calling contactrepo savinggggg.................................................");
 
         //return updated contact
         return contact;
